@@ -18,10 +18,30 @@ let tree = Node(4,
                     )
                 )
 
-let rec inorder (root : btnode) : 'int list = 
-    match root with 
+let rec inorder (root : btnode) : 'int list =
+    match root with
     | Leaf -> []
     | Node(num, left, right) ->
-            (inorder left) @ num :: [] @ (inorder right)
+            (inorder left) @ num :: [] @ (inorder right);;
 
-let () = List.iter (printf "%d ") (inorder tree)
+let rec preorder (root : btnode) : 'int list =
+    match root with
+    | Leaf -> []
+    | Node(num, left, right) ->
+            num :: [] @ (preorder left) @ (preorder right);;
+
+let rec postorder (root : btnode) : 'int list =
+    match root with
+    | Leaf -> []
+    | Node(num, left, right) ->
+            (postorder left) @ (postorder right) @ num :: [];;
+
+(printf "%s\n" "In-order Traversal: ");;
+let () = List.iter (printf "%d ") (inorder tree);;
+(printf "\n");;
+(printf "%s\n" "Pre-order Traversal: ");;
+let () = List.iter (printf "%d ") (preorder tree);;
+(printf "\n");;
+(printf "%s\n" "Post-order Traversal: ");;
+let () = List.iter (printf "%d ") (postorder tree);;
+(printf "\n");;
