@@ -4,37 +4,37 @@
 open Printf
 
 type btnode =
-    | Leaf
-    | Node of int * btnode * btnode
+  | Leaf
+  | Node of int * btnode * btnode
 
 let tree = Node(4,
                 Node(2,
-                    Node(1, Leaf, Leaf),
-                    Node(3, Leaf, Leaf)
+                     Node(1, Leaf, Leaf),
+                     Node(3, Leaf, Leaf)
                     ),
                 Node(6,
-                    Node(5, Leaf, Leaf),
-                    Node(7, Leaf, Leaf)
+                     Node(5, Leaf, Leaf),
+                     Node(7, Leaf, Leaf)
                     )
-                )
+               )
 
-let rec inorder (root : btnode) : 'int list =
-    match root with
-    | Leaf -> []
-    | Node(num, left, right) ->
-            (inorder left) @ num :: [] @ (inorder right);;
+let rec inorder (root : btnode) : int list =
+  match root with
+  | Leaf -> []
+  | Node(num, left, right) ->
+    (inorder left) @ num :: [] @ (inorder right);;
 
-let rec preorder (root : btnode) : 'int list =
-    match root with
-    | Leaf -> []
-    | Node(num, left, right) ->
-            num :: [] @ (preorder left) @ (preorder right);;
+let rec preorder (root : btnode) : int list =
+  match root with
+  | Leaf -> []
+  | Node(num, left, right) ->
+    num :: [] @ (preorder left) @ (preorder right);;
 
-let rec postorder (root : btnode) : 'int list =
-    match root with
-    | Leaf -> []
-    | Node(num, left, right) ->
-            (postorder left) @ (postorder right) @ num :: [];;
+let rec postorder (root : btnode) : int list =
+  match root with
+  | Leaf -> []
+  | Node(num, left, right) ->
+    (postorder left) @ (postorder right) @ num :: [];;
 
 (printf "%s\n" "In-order Traversal: ");;
 let () = List.iter (printf "%d ") (inorder tree);;
