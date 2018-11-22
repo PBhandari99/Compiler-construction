@@ -42,6 +42,11 @@ let size_test_2 = t_int "size_test_2" (size_nodes tree1) 0;;
 let size_test_3 = t_int "size_test_3" (size_nodes tree2) 1;;
 let size_test_4 = t_int "size_test_4" (size_nodes tree3) 2;;
 let size_test_5 = t_int "size_test_5" (size_nodes tree5) 3;;
+let height_test_1 = t_int "height_test_1" (height tree1) 0;;
+let height_test_2 = t_int "height_test_2" (height tree2) 1;;
+let height_test_3 = t_int "height_test_3" (height tree3) 2;;
+let height_test_4 = t_int "height_test_4" (height tree4) 2;;
+let height_test_5 = t_int "height_test_5" (height tree5) 3;;
 
 let suite = "suite">:::[
     my_first_test;
@@ -57,6 +62,11 @@ let suite = "suite">:::[
     size_test_3;
     size_test_4;
     size_test_5;
+    height_test_1;
+    height_test_2;
+    height_test_3;
+    height_test_4;
+    height_test_5;
   ];;
 
 let _ = run_test_tt_main suite;;

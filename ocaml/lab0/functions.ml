@@ -22,9 +22,14 @@ let rec size_nodes (node : btnode) : int =
   | Node(s, left, right) ->
     1 + (size_nodes left) + (size_nodes right);;
 
+let rec height (node : btnode) : int =
+  match node with
+  | Leaf -> 0
+  | Node(s, left, right) ->
+    1 + (max (height left) (height right));;
+
 let tree1 = Leaf;;
 let tree2 = Node("a", Leaf, Leaf);;
 
-(printf "5th fib is: %d\n" (fibonacci 6));;
 
 
