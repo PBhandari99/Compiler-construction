@@ -8,7 +8,6 @@
 *.cmxs
 *.cmxa
 *.log
-*.cache
 test
 out
 
@@ -25,3 +24,6 @@ setup.log
 
 # Merlin configuring file for Vim and Emacs
 .merlin
+
+# oUnit tests.
+oUnit-suite.cache
