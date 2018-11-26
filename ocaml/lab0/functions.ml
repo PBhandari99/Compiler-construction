@@ -1,5 +1,3 @@
-(* Fill in the functions you need to write here *)
-
 open Printf
 
 let rec fibonacci (n : int) : int = 
@@ -22,9 +20,42 @@ let rec size_nodes (node : btnode) : int =
   | Node(s, left, right) ->
     1 + (size_nodes left) + (size_nodes right);;
 
-let tree1 = Leaf;;
-let tree2 = Node("a", Leaf, Leaf);;
+let rec height (node : btnode) : int =
+  match node with
+  | Leaf -> 0
+  | Node(s, left, right) ->
+    1 + (max (height left) (height right));;
 
-(printf "5th fib is: %d\n" (fibonacci 6));;
+let rec increment_all (l : int list) : int list =
+  match l with
+  | [] -> []
+  | first::rest ->
+    (first + 1) :: [] @ (increment_all rest);;
 
+let rec long_strings (l : string list) (length : int) : string list =
+  match l with
+  | [] -> []
+  | first::rest ->
+    if (String.length first) > length then
+      first :: [] @ (long_strings rest length)
+    else
+      (long_strings rest length);;
+
+let rec every_other (l : 'a list) : 'a list =
+    match l with 
+    | [] -> []
+    | first::[] -> first :: []
+    | first::second::rest ->
+            first :: [] @ (every_other rest);;
+
+let rec sum_all (l : int list list) : int list =
+    match l with
+    | [] -> []
+    | first::rest ->
+            let rec sum_list (int_list : int list) : int =
+                match int_list with
+                | [] -> 0
+                | head::last -> 
+                        head + (sum_list last) in
+            (sum_list first) :: [] @ (sum_all rest)
 

@@ -8,6 +8,7 @@
 *.cmxs
 *.cmxa
 *.log
+*.cache
 test
 out
 
