@@ -15,10 +15,8 @@ let height (n : ('k, 'v) avlnode) : int =
   match n with Leaf -> 0 | Node (h, _, _, _, _) -> h
 
 (* Given a avlnode return it key *)
-let get_key (n : ('k, 'v) avlnode) : 'v =
-  match n with
-  | Node (_, _, vl, _, _) -> vl
-  | _ -> failwith "Not happening anytime soon"
+let get_key (n : ('k, 'v) avlnode) : 'k =
+  match n with Node (_, k, _, _, _) -> k | _ -> failwith "cannot happen"
 
 (* Balancing function start here
    *
@@ -37,7 +35,7 @@ let balance_ll (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
       let hr = max (height right) (height lr) + 1 in
       let hn = max hr (height ll) + 1 in
       Node (hn, kl, vl, ll, Node (hr, k, v, lr, right))
-  | _ -> failwith "Not happening anytime soon"
+  | _ -> failwith "cannot happen"
 
 (*  balance_rr : Rotate the given node to the left.
     *    example:
@@ -53,7 +51,27 @@ let balance_rr (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
       let hl = max (height left) (height rl) + 1 in
       let hn = max hl (height rr) + 1 in
       Node (hn, rk, rv, Node (hl, k, v, left, rl), rr)
-  | _ -> failwith "Not happening anytime soon"
+  | _ -> failwith "cannot a happen"
+
+(*
+   * balance_rl : Rotate first to the right and to the left.
+   *
+   *      *                 *
+   *       \                 \               *
+   *        *      -->        *     -->     / \
+   *       /                   \           *   *
+   *      *                     *
+   *)
+let balance_rl (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
+  match n with
+  | Node (h, k, v, left, Node (hr, kr, vr, Node (hrl, krl, vrl, rll, rlr), rr))
+    ->
+      let hl = max (height left) (height rll) + 1 in
+      let hr = max (height rr) (height rlr) + 1 in
+      let hn = max hl hr + 1 in
+      Node
+        (hn, krl, vrl, Node (hl, k, v, left, rll), Node (hr, kr, vr, rlr, rr))
+  | _ -> failwith "cannot happen"
 
 (*
    * balance_lr : Rotate first to the left and to the right.
@@ -67,24 +85,14 @@ let balance_rr (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
    *)
 let balance_lr (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
   match n with
-  | Node (h, k, v, left, right) ->
-      balance_rr (Node (h, k, v, balance_ll left, right))
-  | _ -> failwith "Not happening anytime soon"
-
-(*
-   * balance_rl : Rotate first to the right and to the left.
-   *
-   *      *                 *
-   *       \                 \               *
-   *        *      -->        *     -->     / \
-   *       /                   \           *   *
-   *      *                     *
-   *)
-let balance_rl (n : ('k, 'v) avlnode) : ('k, 'v) avlnode =
-  match n with
-  | Node (h, k, v, left, right) ->
-      balance_ll (Node (h, k, v, left, balance_rr right))
-  | _ -> failwith "Not happening anytime soon"
+  | Node (h, k, v, Node (hl, kl, vl, ll, Node (hlr, klr, vlr, lrl, lrr)), right)
+    ->
+      let hl = max (height ll) (height lrl) + 1 in
+      let hr = max (height right) (height lrr) + 1 in
+      let hn = max hr hl + 1 in
+      Node
+        (hn, klr, vlr, Node (hl, kl, vl, ll, lrl), Node (hr, k, v, lrr, right))
+  | _ -> failwith "cannot happen"
 
 (* Balancing functions end *)
 
@@ -97,20 +105,22 @@ let rec set (n : ('k, 'v) avlnode) (key : 'k) (value : 'v) : ('k, 'v) avlnode =
       if k = key then Node (h, k, value, left, right)
       else if key < k then
         let left_node = set left key value in
-        let d_l = height left_node in
-        let d_r = height right in
-        let bal = d_l - d_r in
-        if bal <> 2 then Node (max d_l d_r + 1, k, v, left_node, right)
-        else if k < get_key left then balance_ll n
-        else balance_lr n
+        let h_l = height left_node in
+        let h_r = height right in
+        let bal = h_l - h_r in
+        if bal <> 2 then Node (max h_l h_r + 1, k, v, left_node, right)
+        else if key < get_key left_node then
+          balance_ll (Node (h_l + 1, k, v, left_node, right))
+        else balance_lr (Node (h_l + 1, k, v, left_node, right))
       else
         let right_node = set right key value in
-        let d_r = height right_node in
-        let d_l = height left in
-        let bal = d_l - d_r in
-        if bal <> -2 then Node (max d_l d_r + 1, k, v, left, right_node)
-        else if k > get_key right then balance_rr n
-        else balance_rl n
+        let h_r = height right_node in
+        let h_l = height left in
+        let bal = h_l - h_r in
+        if bal <> -2 then Node (max h_l h_r + 1, k, v, left, right_node)
+        else if key > get_key right_node then
+          balance_rr (Node (h_r + 1, k, v, left, right_node))
+        else balance_rl (Node (h_r + 1, k, v, left, right_node))
 
 (* Return a list of tuples containing the elements of the tree *)
 let rec inorder (n : ('k, 'v) avlnode) : ('k * 'v) list =
