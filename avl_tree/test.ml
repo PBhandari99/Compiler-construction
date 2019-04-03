@@ -146,7 +146,31 @@ let contains_tests =
   ; t_any "constains4" (contains b_tree "n") false ]
 
 let evaluate_tests =
-  [t_any "evaluate1" (evaluate (Times (Num 0, Num 5)) Leaf) 0]
+  [ t_any "evaluate1" (evaluate (Times (Num 1, Num 5)) Leaf) 5
+  ; t_any "evaluate2"
+      (evaluate
+         (Times (Plus (Variable "x", Variable "y"), Num 5))
+         (add_all Leaf [("x", 5); ("y", 7)]))
+      60 ]
+
+let pretty_tests =
+  [ t_any "pretty1"
+      (pretty
+         (Plus
+            ( Plus (Times (Plus (Num 5, Variable "y"), Variable "x"), Num 2)
+            , Num 1 )))
+      "(5 + y)x + 2 + 1"
+  ; t_any "pretty2"
+      (pretty
+         (Plus
+            ( Num 3
+            , Plus
+                ( Times (Plus (Num 3, Variable "x"), Variable "v")
+                , Times (Plus (Variable "y", Num 4), Num 7) ) )))
+      "3 + (3 + x)v + (y + 4)7"
+  ; t_any "pretty3"
+      (pretty (Times (Plus (Num 3, Variable "x"), Plus (Num 8, Variable "z"))))
+      "(3 + x) * (8 + z)" ]
 
 let sum_tests =
   [ t_any "sum1" (sum Leaf) 0
@@ -154,9 +178,9 @@ let sum_tests =
   ; t_any "sum3" (sum b_tree) 28 ]
 
 let all_tests =
-  get_tests @ contains_tests @ evaluate_tests @ sum_tests @ inorder_tests
-  @ height_tests @ get_key_test @ balance_ll_test @ balance_rr_test
-  @ balance_lr_test @ balance_rl_test @ add_all_test
+  get_tests @ contains_tests @ evaluate_tests @ pretty_tests @ sum_tests
+  @ inorder_tests @ height_tests @ get_key_test @ balance_ll_test
+  @ balance_rr_test @ balance_lr_test @ balance_rl_test @ add_all_test
 
 let suite = "suite" >::: all_tests
 

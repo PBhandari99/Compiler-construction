@@ -55,7 +55,15 @@ type arith =
 
 *)
 
-let rec evaluate (a : arith) (vars : (string, int) avlnode) : int = 0
+let rec evaluate (a : arith) (vars : (string, int) avlnode) : int =
+  match a with
+  | Plus (x, y) -> evaluate x vars + evaluate y vars
+  | Times (x, y) -> evaluate x vars * evaluate y vars
+  | Variable x -> (
+    match get vars x with
+    | None -> failwith "Variable not defined with in scope"
+    | Some value -> value )
+  | Num x -> x
 
 (*
   Next, write pretty, which takes an arithmetic expression and renders it in
@@ -83,4 +91,20 @@ let rec evaluate (a : arith) (vars : (string, int) avlnode) : int = 0
   should work nicely.  There are several reasonable answers here.
 *)
 
-let rec pretty (a : arith) : string = ""
+let rec pretty (a : arith) : string =
+  match a with
+  | Plus (x, y) -> pretty x ^ " + " ^ pretty y
+  | Times (x, y) -> (
+    match Times (x, y) with
+    | Times (Plus (a, b), Plus (c, d)) ->
+        "(" ^ pretty a ^ " + " ^ pretty b ^ ")" ^ " * " ^ "(" ^ pretty c
+        ^ " + " ^ pretty d ^ ")"
+    | Times (Plus (a, b), c) ->
+        "(" ^ pretty a ^ " + " ^ pretty b ^ ")" ^ pretty c
+    | Times (c, Plus (a, b)) ->
+        "(" ^ pretty a ^ " + " ^ pretty b ^ ")" ^ pretty c
+    | _ -> pretty x ^ " * " ^ pretty y )
+  | Variable x -> x
+  | Num x -> string_of_int x
+
+(* file ends here *)
